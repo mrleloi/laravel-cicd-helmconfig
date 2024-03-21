@@ -4,7 +4,7 @@
 
 replicaCount: 1
 
-tag: "latest"
+tag: "master-0.12"
 
 imagePullSecrets: []
 nameOverride: ""
