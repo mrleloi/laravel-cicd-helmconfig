@@ -4,11 +4,7 @@
 
 replicaCount: 1
 
-image:
-  repository: leloimr/laravel-cicd
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+tag: "latest"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -40,8 +36,10 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  type: ClusterIP
+  type: NodePort
   port: 80
+  targetPort: 80
+  nodePort: 30007
 
 ingress:
   enabled: true
@@ -74,11 +72,11 @@ resources: {}
 livenessProbe:
   httpGet:
     path: /
-    port: http
+    port: 80
 readinessProbe:
   httpGet:
     path: /
-    port: http
+    port: 80
 
 autoscaling:
   enabled: false
@@ -86,19 +84,6 @@ autoscaling:
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
-
-# Additional volumes on the output Deployment definition.
-volumes: []
-# - name: foo
-#   secret:
-#     secretName: mysecret
-#     optional: false
-
-# Additional volumeMounts on the output Deployment definition.
-volumeMounts: []
-# - name: foo
-#   mountPath: "/etc/foo"
-#   readOnly: true
 
 nodeSelector: {}
 

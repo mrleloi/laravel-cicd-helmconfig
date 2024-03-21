@@ -31,29 +31,31 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: laravel-cicd-nginx
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "leloimr/laravel-cicd-nginx:{{ .Values.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: Always
           ports:
-            - name: http
-              containerPort: {{ .Values.service.port }}
-              protocol: TCP
-          livenessProbe:
-            {{- toYaml .Values.livenessProbe | nindent 12 }}
-          readinessProbe:
-            {{- toYaml .Values.readinessProbe | nindent 12 }}
+            - containerPort: 80
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
-          volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
-      volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+          
+        - name: laravel-cicd-app
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "leloimr/laravel-cicd-app:{{ .Values.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9000
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+        #   volumeMounts:
+        #     - name: data
+        #       mountPath: /var/www/html/
+    #   volumes:
+    #     - name: data
+    #       emptyDir: {}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
